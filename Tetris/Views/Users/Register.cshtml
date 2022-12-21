@@ -1,0 +1,51 @@
+﻿@model  Tetris.Models.Users.RegisterModel
+
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="~/css/register.css" />
+</head>
+<body>
+    <div class="center">
+        <h3> Создать аккаунт </h3>
+        <form asp-controller="Users" asp-action="Register" asp-antiforgery="true" method="post">
+            <div class="input-group mb-3">
+                <input asp-for="Name" type="text" class="form-control" placeholder="Логин">
+                <div class="col-12">
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="input-group mb-3">
+                <input asp-for="Age" type="number" class="form-control" placeholder="Возраст">
+                <div class="col-12">
+                    <span asp-validation-for="Age" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="input-group mb-3">
+                <input asp-for="Phone" type="text" class="form-control" placeholder="Номер телефона">
+                <div class="col-12">
+                    <span asp-validation-for="Phone" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="input-group mb-3">
+                <input asp-for="Password" type="password" class="form-control" placeholder="Пароль">
+                <div class="col-12">
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="input-group mb-3">
+                <input asp-for="PasswordConfirm" type="password" class="form-control" placeholder="Повторите пароль">
+                <div class="col-12">
+                    <span asp-validation-for="PasswordConfirm" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    <button type="submit" class="btn btn-primary btn-block">Войти</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

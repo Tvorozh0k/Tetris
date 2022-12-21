@@ -1,16 +1,13 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
-
-document.addEventListener('DOMContentLoaded', () => {
+﻿document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('tetris');
     const context = canvas.getContext('2d');
 
+    // Настройка масштаба отрисовываемых фигур
     context.scale(20, 20);
 
+    // Уничтожаем полностью застроенные строки арены
     function arenaSweep() {
-        let rowCount = 1;
+        let rowCount = 0;
         outer: for (let y = arena.length - 1; y > 0; --y) {
             for (let x = 0; x < arena[y].length; ++x) {
                 if (arena[y][x] === 0) {
@@ -20,13 +17,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const row = arena.splice(y, 1)[0].fill(0);
             arena.unshift(row);
-            ++y;
-
-            player.score += rowCount * 10;
-            rowCount *= 2;
+            ++y; ++rowCount;
         }
+
+        player.score += points[rowCount];
+        player.count += rowCount;
+        player.level = 1 + Math.floor(player.count / countNewLevel);
+        dropInterval = Math.pow(0.75, player.level) * 1333;
     }
 
+    // Проверка на то, можно ли сдвинуть фигуру 
+    // (влево, вправо или вниз)
     function collide(arena, player) {
         const [m, o] = [player.matrix, player.pos];
         for (let y = 0; y < m.length; ++y) {
@@ -41,6 +42,9 @@ document.addEventListener('DOMContentLoaded', () => {
         return false;
     }
 
+    // Создание двумерного массива размерности h x w
+    // h - число строк
+    // w - число столбцов
     function createMatrix(w, h) {
         const matrix = [];
         while (h--) {
@@ -49,6 +53,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return matrix;
     }
 
+    // Создание арены для нашей игры 
+    arena = createMatrix(12, 20);
+
+    // Создание одной из семи возможных тетро фигурок
     function createPiece(type) {
         if (type === 'T') {
             return [
@@ -95,6 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Отрисовка
     function draw() {
         context.fillStyle = '#000';
         context.fillRect(0, 0, canvas.width, canvas.height);
@@ -103,6 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
         drawMatrix(player.matrix, player.pos);
     }
 
+    // Отрисовка матрицы - в зависимости от значений, каждая
+    // ячейка закрашивается в определенный цвет
     function drawMatrix(matrix, offset) {
         matrix.forEach((row, y) => {
             row.forEach((value, x) => {
@@ -114,6 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Наложение на арену (массив нулей) тетро-фигур, 
+    // заполнив соответствующие клетки какими-то ненулевыми числами
     function merge(arena, player) {
         player.matrix.forEach((row, y) => {
             row.forEach((value, x) => {
@@ -124,6 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     }
 
+    // Тетро фигурка падает вниз, пока может, после чего происходит обновление очков
     function playerDrop() {
         player.pos.y++;
         if (collide(arena, player)) {
@@ -136,6 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dropCounter = 0;
     }
 
+    // Сдвиг тетро фигуры на dir единиц вправо
     function playerMove(dir) {
         player.pos.x += dir;
         if (collide(arena, player)) {
@@ -143,19 +158,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Генерация новой тетро фигурки 
     function playerReset() {
         const pieces = 'ILJOTSZ';
         player.matrix = createPiece(pieces[pieces.length * Math.random() | 0]);
         player.pos.y = 0;
         player.pos.x = (arena[0].length / 2 | 0) - (player.matrix[0].length / 2 | 0);
 
+        // Если превысли верхнюю границу, заканчиваем игру, очищаем арену
         if (collide(arena, player)) {
+            result();
             arena.forEach(row => row.fill(0));
             player.score = 0;
+            player.count = 0;
+            player.level = 1;
+            dropInterval = 1000;
             updateScore();
         }
     }
 
+    // Метод поворота, вызываемый пользователем с проверкой
+    // возможности поворота при помощи функции collide
     function playerRotate(dir) {
         const pos = player.pos.x;
         let offset = 1;
@@ -171,6 +194,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Поворот матрицы: сначала транспонирование,
+    // потом реверс каждой из строк матрицы 
     function rotate(matrix, dir) {
         for (let y = 0; y < matrix.length; ++y) {
             for (let x = 0; x < y; ++x) {
@@ -194,6 +219,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let dropCounter = 0;
     let dropInterval = 1000;
 
+    let countNewLevel = 10;
+
     let lastTime = 0
 
     function update(time = 0) {
@@ -208,10 +235,14 @@ document.addEventListener('DOMContentLoaded', () => {
         requestAnimationFrame(update);
     }
 
+    // Обновление счета - обращение к html файлу 
     function updateScore() {
         document.getElementById('score').innerText = player.score;
+        document.getElementById('count').innerText = player.count;
+        document.getElementById('level').innerText = player.level;
     }
 
+    // Настройка цветов тетро фигурок в зависимости от их индекса в функции createPeace
     const colors = [
         null,
         '#FF0D72',
@@ -223,29 +254,44 @@ document.addEventListener('DOMContentLoaded', () => {
         '#3877FF'
     ];
 
-    arena = createMatrix(12, 20);
+    // Очки увеличиваются в зависимости от количества уничтоженных строк одновременно
+    const points = [
+        0,
+        10,
+        30,
+        60,
+        100
+    ]
 
+    // Игрок 
     player = {
-        pos: { x: 0, y: 0 },
-        matrix: null,
-        score: 0
+        pos: { x: 0, y: 0 }, // стартовая позиция фигур
+        matrix: null, // следующая фигура
+        score: 0, // счет
+        count: 0, // кол-во уничтоженных строк
+        level: 1 // уровень
     }
 
+    // Обработка событий нажатия кнопок
     document.addEventListener('keydown', event => {
         if (event.code == 'ArrowLeft') {
-            playerMove(-1);
+            playerMove(-1); // <- сдвиг на единицу влево
         } else if (event.code == 'ArrowRight') {
-            playerMove(1);
+            playerMove(1); // -> сдвиг на единицу вправо
         } else if (event.code == 'ArrowDown') {
-            playerDrop();
+            playerDrop(); // сдвиг на единицу вниз
         } else if (event.code == 'KeyQ') {
-            playerRotate(-1);
+            playerRotate(-1); // поворот (против часовой стрелки)
         } else if (event.code == 'KeyW') {
-            playerRotate(1);
+            playerRotate(1);  // поворот (по часовой стрелке)
         }
     });
 
     playerReset();
     updateScore();
     update();
+
+    function result() {
+        $.post('Result', { score: player.score });
+    }
 })

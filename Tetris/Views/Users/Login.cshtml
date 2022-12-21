@@ -1,33 +1,34 @@
 ﻿@model  Tetris.Models.Users.LoginModel
 
-Введите логин и пароль
-<form asp-controller="Users" asp-action="Login" asp-antiforgery="true" method="post">
-    <div class="input-group mb-3">
-        <input asp-for="Login" type="text" class="form-control" placeholder="Логин">
-        <div class="input-group-append">
-            <div class="input-group-text">
-                <span class="fas fa-user"></span>
-            </div>
-        </div>
-        <div class="col-12">
-            <span asp-validation-for="Login" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="input-group mb-3">
-        <input asp-for="Password" type="password" class="form-control" placeholder="Пароль">
-        <div class="input-group-append">
-            <div class="input-group-text">
-                <span class="fas fa-lock"></span>
-            </div>
-        </div>
-        <div class="col-12">
-            <span asp-validation-for="Password" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="row">
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="~/css/login.css" />
+</head>
+<body>
+    <div class="center">
+        <h3> Вход в аккаунт </h3>
 
-        <div class="col-4">
-            <button type="submit" class="btn btn-primary btn-block">Войти</button>
-        </div>
+        <p>
+            <div class="col-12">
+                <span asp-validation-for="Login" class="text-danger"></span>
+            </div>
+        </p>
+       
+        <form asp-controller="Users" asp-action="Login" asp-antiforgery="true" method="post">
+            <div class="input-group mb-3">
+                <input asp-for="Login" type="text" class="form-control" placeholder="Логин">
+            </div>
+            <div class="input-group mb-3">
+                <input asp-for="Password" type="password" class="form-control" placeholder="Пароль">
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    <button type="submit" class="btn btn-primary btn-block">Войти</button>
+                </div>
+            </div>
+        </form>
     </div>
-</form>
+</body>
+</html>

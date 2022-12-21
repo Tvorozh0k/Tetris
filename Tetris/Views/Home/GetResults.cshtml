@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Entities.Game>
+
+    @{
+        ViewData["Title"] = "Home Page";
+        Layout = "_Layout";
+    }
+
+    <table class="table table-striped table-condensed" id="gamesTable">
+        <thead>
+            <tr>
+                <th>
+                    Id
+                </th>
+                <th>
+                    Счет
+                </th>
+                <th>
+                    Время игры
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Score)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GameDate)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>

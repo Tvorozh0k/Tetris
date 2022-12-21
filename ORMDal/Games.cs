@@ -11,6 +11,7 @@ namespace ORMDal
     {
         public int Id { get; set; }
         public int UserId { get; set; }
+        public DateTime? GameDate { get; set; }
         public int Score { get; set; }
 
         public virtual Users User { get; set; }

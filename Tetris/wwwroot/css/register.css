@@ -1,0 +1,14 @@
+﻿.center {
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -35%);
+    width: 400px;
+    background: white;
+    border-radius: 10px;
+}
+
+.center h3 {
+    text-align: center;
+    padding: 20px 0;
+}

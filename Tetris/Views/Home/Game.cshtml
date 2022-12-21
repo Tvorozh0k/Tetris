@@ -1,0 +1,33 @@
+﻿
+@{
+    ViewData["Title"] = "Home Page";
+    Layout = "_Layout";
+}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <script src="~/js/site.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="~/css/style.css"/>
+    <style>
+        body {
+            background: #202028;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+        }
+
+        canvas {
+            border: solid .2em #fff;
+            height: 90vh;
+        }
+    </style>
+</head>
+<body>
+    <p>
+        Счет: <span id="score"></span> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Ряды: <span id="count"></span> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Уровень: <span id="level"></span>
+    </p>
+    <canvas id="tetris" width="240" height="400" , style='width:276px;height:460px'></canvas>
+
+</body>
+</html>

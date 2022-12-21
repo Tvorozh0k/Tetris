@@ -11,7 +11,7 @@ namespace Tetris.Models.Users
 
         public string FullName { get; set; }
 
-        public List<string> Phones { get; set; }
+        public List<Entities.Game> Games { get; set; }
 
     }
 }

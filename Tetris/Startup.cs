@@ -36,14 +36,21 @@ namespace Tetris
                     options.AccessDeniedPath = new PathString("/Users/Login");
                     options.ExpireTimeSpan = new TimeSpan(7, 0, 0, 0);
                 });
-            services.AddAuthorization();
 
+            services.AddAuthorization();
             services.AddControllersWithViews();
 
             //services.AddSingleton<IUsersDal>(new UsersDal());
 
+            // Два варианта:
+            // 1. services.AddTransient<IUsersDal, UsersDal>();
+            // 2. services.AddTransient<IUsersDal, OrmUsersDal>();
+
             services.AddTransient<IUsersDal, OrmUsersDal>();
             services.AddTransient<IUsersBL, UsersBL>();
+
+            services.AddTransient<IGamesDal, OrmGamesDal>();
+            services.AddTransient<IGamesBL, GamesBL>();
 
             //services.AddScoped<IUsersDal, UsersDal>();
         }

@@ -1,4 +1,8 @@
-﻿using Tetris.Models;
+﻿using BL;
+using Interfaces;
+using Tetris.Models.Users;
+using Tetris.Models;
+using Tetris.Models.Home;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -13,27 +17,59 @@ namespace Tetris.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private IUsersBL _userBl;
+        private IGamesBL _gameBl;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IUsersBL userBl, IGamesBL gameBl)
         {
             _logger = logger;
+            _userBl = userBl;
+            _gameBl = gameBl;
         }
 
-        [Authorize(Roles = "Admin")]
-        public IActionResult Index(int id, string name)
+        public IActionResult Index()
         {
-            TempData["Success"] = "Success";
             return View("Index");
         }
 
-        public IActionResult Privacy()
+        [HttpGet]
+        [Authorize]
+        public IActionResult Game()
         {
-            return Json(new { Id = 1, Name = "Andrey" });
+            var newGame = new Entities.Game();
+
+            GameModel gameModel = new GameModel()
+            {
+                Score = 0,
+                GameDate = DateTime.Now,
+                UserId = _userBl.GetByLogin(User.Identity.Name).Id
+            };
+
+            return View(gameModel);
         }
 
-        public IActionResult Info()
+        [HttpPost]
+        [Authorize]
+        public IActionResult Result(int score)
         {
-            return View();
+            var game = new Entities.Game()
+            {
+                Score = score,
+                GameDate = DateTime.Now,
+                UserId = _userBl.GetByLogin(User.Identity.Name).Id
+            };
+
+            _gameBl.Add(game);
+
+            return RedirectToAction("Game");
+        }
+
+        [HttpGet]
+        [Authorize]
+        public IActionResult GetResults()
+        {
+            var query = _gameBl.GetByUserId(_userBl.GetByLogin(User.Identity.Name).Id);
+            return View(query);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
